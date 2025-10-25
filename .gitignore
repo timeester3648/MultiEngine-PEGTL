@@ -4,3 +4,9 @@ private
 /.vs
 /.vscode
 .DS_Store
+
+# exclude project files
+**.sln
+**.vcxproj
+**.vcxproj.user
+**.vcxproj.filters
