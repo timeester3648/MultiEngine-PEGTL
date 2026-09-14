@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2019-2026 Dr. Colin Hirsch and Daniel Frey
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 
@@ -10,8 +10,7 @@
 namespace TAO_PEGTL_NAMESPACE::internal
 {
    template< typename Control,
-             template< typename... >
-             class Action,
+             template< typename... > class Action,
              typename ParseInput,
              typename... States >
    void missing_apply0( ParseInput& in, States&&... st )
@@ -24,4 +23,5 @@ namespace TAO_PEGTL_NAMESPACE::internal
 
 }  // namespace TAO_PEGTL_NAMESPACE::internal
 
+// FCOV_EXCL_FILE
 #endif

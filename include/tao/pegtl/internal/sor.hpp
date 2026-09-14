@@ -1,30 +1,23 @@
-// Copyright (c) 2014-2023 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2026 Dr. Colin Hirsch and Daniel Frey
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef TAO_PEGTL_INTERNAL_SOR_HPP
 #define TAO_PEGTL_INTERNAL_SOR_HPP
 
+#include <cstddef>
 #include <utility>
-
-#include "enable_control.hpp"
-#include "failure.hpp"
 
 #include "../apply_mode.hpp"
 #include "../config.hpp"
 #include "../rewind_mode.hpp"
 #include "../type_list.hpp"
 
+#include "enable_control.hpp"
+#include "failure.hpp"
+
 namespace TAO_PEGTL_NAMESPACE::internal
 {
-   template< typename... Rules >
-   struct sor;
-
-   template<>
-   struct sor<>
-      : failure
-   {};
-
    template< typename... Rules >
    struct sor
    {
@@ -33,10 +26,8 @@ namespace TAO_PEGTL_NAMESPACE::internal
 
       template< apply_mode A,
                 rewind_mode M,
-                template< typename... >
-                class Action,
-                template< typename... >
-                class Control,
+                template< typename... > class Action,
+                template< typename... > class Control,
                 std::size_t... Indices,
                 typename ParseInput,
                 typename... States >
@@ -47,10 +38,8 @@ namespace TAO_PEGTL_NAMESPACE::internal
 
       template< apply_mode A,
                 rewind_mode M,
-                template< typename... >
-                class Action,
-                template< typename... >
-                class Control,
+                template< typename... > class Action,
+                template< typename... > class Control,
                 typename ParseInput,
                 typename... States >
       [[nodiscard]] static bool match( ParseInput& in, States&&... st )
@@ -58,6 +47,11 @@ namespace TAO_PEGTL_NAMESPACE::internal
          return match< A, M, Action, Control >( std::index_sequence_for< Rules... >(), in, st... );
       }
    };
+
+   template<>
+   struct sor<>
+      : failure
+   {};
 
    template< typename... Rules >
    inline constexpr bool enable_control< sor< Rules... > > = false;

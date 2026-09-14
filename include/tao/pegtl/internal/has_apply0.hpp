@@ -1,10 +1,11 @@
-// Copyright (c) 2017-2023 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2017-2026 Dr. Colin Hirsch and Daniel Frey
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef TAO_PEGTL_INTERNAL_HAS_APPLY0_HPP
 #define TAO_PEGTL_INTERNAL_HAS_APPLY0_HPP
 
+#include <type_traits>
 #include <utility>
 
 #include "../config.hpp"
@@ -14,9 +15,10 @@ namespace TAO_PEGTL_NAMESPACE::internal
    template< typename, typename, template< typename... > class, typename... >
    inline constexpr bool has_apply0 = false;
 
-   template< typename C, template< typename... > class Action, typename... S >
-   inline constexpr bool has_apply0< C, decltype( C::template apply0< Action >( std::declval< S >()... ) ), Action, S... > = true;
+   template< typename Control, template< typename... > class Action, typename... States >
+   inline constexpr bool has_apply0< Control, decltype( Control::template apply0< Action >( std::declval< States >()... ) ), Action, States... > = true;
 
 }  // namespace TAO_PEGTL_NAMESPACE::internal
 
+// FCOV_EXCL_FILE
 #endif

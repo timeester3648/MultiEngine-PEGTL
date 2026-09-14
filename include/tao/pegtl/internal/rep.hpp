@@ -1,27 +1,29 @@
-// Copyright (c) 2014-2023 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2026 Dr. Colin Hirsch and Daniel Frey
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef TAO_PEGTL_INTERNAL_REP_HPP
 #define TAO_PEGTL_INTERNAL_REP_HPP
 
-#include "enable_control.hpp"
-#include "seq.hpp"
-#include "success.hpp"
+#include <cstddef>
 
 #include "../apply_mode.hpp"
 #include "../config.hpp"
 #include "../rewind_mode.hpp"
 #include "../type_list.hpp"
 
+#include "enable_control.hpp"
+#include "seq.hpp"
+#include "success.hpp"
+
 namespace TAO_PEGTL_NAMESPACE::internal
 {
-   template< unsigned Cnt, typename... Rules >
+   template< std::size_t Cnt, typename... Rules >
    struct rep
       : rep< Cnt, seq< Rules... > >
    {};
 
-   template< unsigned Cnt >
+   template< std::size_t Cnt >
    struct rep< Cnt >
       : success
    {};
@@ -31,7 +33,7 @@ namespace TAO_PEGTL_NAMESPACE::internal
       : success
    {};
 
-   template< unsigned Cnt, typename Rule >
+   template< std::size_t Cnt, typename Rule >
    struct rep< Cnt, Rule >
    {
       using rule_t = rep;
@@ -39,19 +41,16 @@ namespace TAO_PEGTL_NAMESPACE::internal
 
       template< apply_mode A,
                 rewind_mode M,
-                template< typename... >
-                class Action,
-                template< typename... >
-                class Control,
+                template< typename... > class Action,
+                template< typename... > class Control,
                 typename ParseInput,
                 typename... States >
       [[nodiscard]] static bool match( ParseInput& in, States&&... st )
       {
-         auto m = in.template auto_rewind< M >();
-         using m_t = decltype( m );
+         auto m = Control< rep >::template guard< A, M, Action, Control >( in, st... );
 
-         for( unsigned i = 0; i != Cnt; ++i ) {
-            if( !Control< Rule >::template match< A, m_t::next_rewind_mode, Action, Control >( in, st... ) ) {
+         for( std::size_t i = 0; i != Cnt; ++i ) {
+            if( !Control< Rule >::template match< A, rewind_mode::optional, Action, Control >( in, st... ) ) {
                return false;
             }
          }
@@ -59,7 +58,7 @@ namespace TAO_PEGTL_NAMESPACE::internal
       }
    };
 
-   template< unsigned Cnt, typename... Rules >
+   template< std::size_t Cnt, typename... Rules >
    inline constexpr bool enable_control< rep< Cnt, Rules... > > = false;
 
 }  // namespace TAO_PEGTL_NAMESPACE::internal

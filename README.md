@@ -11,28 +11,24 @@
 [![CodeQL](https://github.com/taocpp/PEGTL/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/taocpp/PEGTL/actions/workflows/codeql-analysis.yml)
 [![Codecov](https://codecov.io/gh/taocpp/PEGTL/branch/main/graph/badge.svg?token=ykWa8RRdyk)](https://codecov.io/gh/taocpp/PEGTL)
 
-The Parsing Expression Grammar Template Library (PEGTL) is a zero-dependency C++ header-only parser combinator library for creating parsers according to a [Parsing Expression Grammar](http://en.wikipedia.org/wiki/Parsing_expression_grammar) (PEG).
+The **Parsing Expression Grammar Template Library** (PEGTL) is a zero-dependency [C++](https://en.cppreference.com/w/cpp.html) [header-only](https://en.wikipedia.org/wiki/Header-only) [parser combinator](https://en.wikipedia.org/wiki/Parser_combinator) library for creating [parsers](https://en.wikipedia.org/wiki/Parsing#Parser) according to a [Parsing Expression Grammar](http://en.wikipedia.org/wiki/Parsing_expression_grammar) (PEG).
 
-During development of a new major version the main branch can go through incompatible changes. For a stable experience please download [the latest release](https://github.com/taocpp/PEGTL/releases) rather than using the main branch.
 
 ## Documentation
 
-* [Changelog](doc/Changelog.md)
-* [Development](doc/README.md) (requires C++17)
-* [Version 3.x](https://github.com/taocpp/PEGTL/blob/3.x/doc/README.md) (requires C++17)
-* [Version 2.x](https://github.com/taocpp/PEGTL/blob/2.x/doc/README.md) (requires C++11)
-* [Version 1.x](https://github.com/taocpp/PEGTL/blob/1.x/doc/README.md) (requires C++11)
+* [Main Branch Documentation](https://github.com/taocpp/PEGTL/blob/main/doc/README.md) &nbsp; <sup>[C++20](https://en.cppreference.com/w/cpp/20.html)</sup>
+* [Version 4.x Documentation](https://github.com/taocpp/PEGTL/blob/4.x/doc/README.md) &nbsp; <sup>[C++17](https://en.cppreference.com/w/cpp/17.html)</sup>
+* [Version 3.x Documentation](https://github.com/taocpp/PEGTL/blob/3.x/doc/README.md) &nbsp; <sup>[C++17](https://en.cppreference.com/w/cpp/17.html)</sup>
+* [Version 2.x Documnetation](https://github.com/taocpp/PEGTL/blob/2.x/doc/README.md) &nbsp; <sup>[C++11](https://en.cppreference.com/w/cpp/11.html)</sup>
+* [Version 1.x Documentation](https://github.com/taocpp/PEGTL/blob/1.x/doc/README.md) &nbsp; <sup>[C++11](https://en.cppreference.com/w/cpp/11.html)</sup>
 
-## Contact
-
-For questions and suggestions regarding the PEGTL, success or failure stories, and any other kind of feedback, please feel free to open a [discussion](https://github.com/taocpp/PEGTL/discussions), an [issue](https://github.com/taocpp/PEGTL/issues) or a [pull request](https://github.com/taocpp/PEGTL/pulls), or contact the authors at `taocpp(at)icemx.net`.
 
 ## Introduction
 
 Grammars are written as regular C++ code, created with template programming (not template meta programming), i.e. nested template instantiations that naturally correspond to the inductive definition of PEGs (and other parser-combinator approaches).
 
-A comprehensive set of [parser rules](doc/Rule-Reference.md) that can be combined and extended by the user is included, as are mechanisms for debugging grammars, and for attaching user-defined [actions](doc/Actions-and-States.md) to grammar rules.
-Here is an example of how a parsing expression grammar rule is implemented as C++ class with the PEGTL.
+A comprehensive set of [parser rules](doc/Rule-Reference.md) that can be combined and extended by the user is included, as are mechanisms for [debugging grammars](doc/Debug-Facilities.md), and for attaching user-defined [actions](doc/Actions-and-States.md) to grammar rules.
+Here is an example of a parsing expression [grammar rule](doc/Rules-and-Grammars.md) implemented as a C++ class with the PEGTL.
 
 ```c++
 // PEG rule for integers consisting of a non-empty
@@ -49,23 +45,26 @@ struct sign : one< '+', '-' > {};
 struct integer : seq< opt< sign >, plus< digit > > {};
 ```
 
-PEGs are superficially similar to Context-Free Grammars (CFGs), however the more deterministic nature of PEGs gives rise to some very important differences.
-The included [grammar analysis](doc/Grammar-Analysis.md) finds several typical errors in PEGs, including left recursion.
+PEGs are superficially similar to [Context-Free Grammars](https://en.wikipedia.org/wiki/Context-free_grammar) (CFGs), however the more deterministic nature of PEGs gives rise to some very important differences in semantics.
+The included [grammar analysis](doc/Debug-Facilities.md#grammar-analysis) finds several typical errors in PEGs, including [left recursion](https://en.wikipedia.org/wiki/Left_recursion).
+
 
 ## Design
 
-The PEGTL is designed to be "lean and mean", the core library consists of approximately 6000 lines of code.
-Emphasis is on simplicity and efficiency, preferring a well-tuned simple approach over complicated optimisations.
+The PEGTL is designed to be "lean and mean".
+The core library has around 12K lines of code.
+Emphasis is on simplicity and efficiency, putting a well-tuned *relatively* simple approach above overly complex optimizations.
 
 The PEGTL is mostly concerned with parsing combinators and grammar rules, and with giving the user of the library (the possibility of) full control over all other aspects of a parsing run.
-Whether/which actions are taken, and whether/which data structures are created during a parsing run, is entirely up to the user.
+Whether/which [actions](doc/Actions-and-States.md) are taken, and whether/which data structures are created during a [parsing run](doc/Inputs-and-Parsing.md), is entirely up to the user.
 
-Included are some [examples](doc/Contrib-and-Examples.md#examples) for typical situation like unescaping escape sequences in strings, building a generic [JSON](http://www.json.org/) data structure, and on-the-fly evaluation of arithmetic expressions.
+Included are some [examples](doc/Example-Reference.md) for typical situations like parsing integers, unescaping escape sequences in strings, building a generic [JSON](http://www.json.org/) data structure, and on-the-fly evaluation of arithmetic expressions.
 
 Through the use of template programming and template specialisations it is possible to write a grammar once, and use it in multiple ways with different (semantic) actions in different (or the same) parsing runs.
 
 With the PEG formalism, the separation into lexer and parser stages is usually dropped -- everything is done in a single grammar.
-The rules are expressed in C++ as template instantiations, and it is the compiler's task to optimise PEGTL grammars.
+The parsing rules of grammars are expressed in C++ as template instantiations, and it is *mostly* the compiler's task to optimize PEGTL grammars.
+
 
 ## Status
 
@@ -74,10 +73,18 @@ Each commit is automatically tested with multiple architectures, operating syste
 Each commit is checked with the GCC and Clang [sanitizers](https://github.com/google/sanitizers), Clang's [Static Analyzer](https://clang-analyzer.llvm.org/), and [`clang-tidy`](http://clang.llvm.org/extra/clang-tidy/).
 Additionally, we use [CodeQL](https://securitylab.github.com/tools/codeql) to scan for (security) issues.
 
-Code coverage is automatically measured and the unit tests cover 100% of the core library code (for releases).
+Code coverage is automatically measured, for releases the unit tests cover 100% of the core library (with the caveat that coverage of C++ code, especially with many templates, is not an exact science.)
 
 [Releases](https://github.com/taocpp/PEGTL/releases) are done in accordance with [Semantic Versioning](http://semver.org/).
-Incompatible API changes are *only* allowed to occur between major versions.
+Incompatible changes to the public API are *only* allowed to occur with a new major version.
+
+For a stable experience please download [the latest release](https://github.com/taocpp/PEGTL/releases).
+
+
+## Contact
+
+For questions and suggestions regarding the PEGTL, success or failure stories, and any other kind of feedback, please feel free to open a [discussion](https://github.com/taocpp/PEGTL/discussions), an [issue](https://github.com/taocpp/PEGTL/issues) or a [pull request](https://github.com/taocpp/PEGTL/pulls), or contact the authors at `taocpp(at)icemx.net`.
+
 
 ## Thank You
 
@@ -127,19 +134,21 @@ In appreciation of all contributions here are the people that have [directly con
 [<img alt="wravery" src="https://avatars.githubusercontent.com/u/6502881" width="120">](https://github.com/wravery)
 [<img alt="zhihaoy" src="https://avatars.githubusercontent.com/u/43971430" width="120">](https://github.com/zhihaoy)
 
+
 ## The Art of C++
 
 The PEGTL is part of [The Art of C++](https://taocpp.github.io/).
 
-[<img alt="colinh" src="https://avatars.githubusercontent.com/u/113184" width="120">](https://github.com/colinh)
+[<img alt="colinh" src="https://avatars.githubusercontent.com/u/113184" width="120">](https://github.com/ColinH)
 [<img alt="d-frey" src="https://avatars.githubusercontent.com/u/3956325" width="120">](https://github.com/d-frey)
 [<img alt="uilianries" src="https://avatars.githubusercontent.com/u/4870173" width="120">](https://github.com/uilianries)
+
 
 ## License
 
 <a href="https://opensource.org/licenses/BSL-1.0"><img align="right" src="https://opensource.org/wp-content/uploads/2009/06/OSIApproved.svg" width="150" hspace="20" alt="Open Source Initiative"></a>
 
-Copyright (c) 2007-2023 Daniel Frey and Dr. Colin Hirsch
+Copyright (c) 2007-2026 Dr. Colin Hirsch and Daniel Frey
 
 The PEGTL is certified [Open Source](http://www.opensource.org/docs/definition.html) software.
 It is [licensed](https://pdimov.github.io/blog/2020/09/06/why-use-the-boost-license/) under the terms of the [Boost Software License, Version 1.0](https://www.boost.org/LICENSE_1_0.txt) reproduced here.
